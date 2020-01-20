@@ -175,7 +175,7 @@ def invoicedetails(request):
         grand_total = grand_total + total
     print(items)
      
-
+    #testing 
     # push the data to the database 
     current_time = datetime.datetime.now() 
     print(current_time)
