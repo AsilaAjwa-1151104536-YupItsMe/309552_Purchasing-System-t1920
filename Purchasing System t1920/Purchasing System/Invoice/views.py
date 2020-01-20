@@ -176,6 +176,7 @@ def invoicedetails(request):
     print(items)
      
     #testing 
+    #test2
     # push the data to the database 
     current_time = datetime.datetime.now() 
     print(current_time)
