@@ -11,15 +11,15 @@ class PurchaseOrder(models.Model):
     time_created = models.DateTimeField()
     description = models.TextField(null=True,default=None, blank=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
-    person_id = models.ForeignKey(Person)
-    vendor_id = models.ForeignKey(Vendor)
-    quotation_id = models.OneToOneField(Quotation)
+    person_id = models.ForeignKey(Person, on_delete = models.CASCADE)
+    vendor_id = models.ForeignKey(Vendor, on_delete = models.CASCADE)
+    quotation_id = models.OneToOneField(Quotation, on_delete = models.CASCADE)
     def __str__(self):
         return str(self.purchase_order_id)
 
 class PurchaseOrderItem(models.Model):
-    purchase_order_id = models.ForeignKey(PurchaseOrder)
-    item_id = models.ForeignKey(Item)
+    purchase_order_id = models.ForeignKey(PurchaseOrder, on_delete = models.CASCADE)
+    item_id = models.ForeignKey(Item, on_delete = models.CASCADE)
     quantity = models.IntegerField()
     unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)

@@ -20,6 +20,7 @@ from django.http.request import QueryDict
 from decimal import Decimal
 import random
 import datetime 
+from django.utils.datastructures import MultiValueDictKeyError
 
 
 @login_required
@@ -36,7 +37,7 @@ def invoiceform(request):
 @login_required
 def fillinginvoice(request):
 
-    global responsesItems
+    #global responsesItems
     context = {}
     pur_id = request.GET['pur_id']
     inv_id = random.randint(1000000,9999999)
@@ -52,7 +53,7 @@ def fillinginvoice(request):
                 'rows':item_list
             }
 
-        responsesItems = render(request,'Invoice/invoiceform.html',context).content
+        #responsesItems = render(request,'Invoice/invoiceform.html',context).content
         return render(request,'Invoice/invoiceform.html',context)
 
     except Invoice.DoesNotExist:
@@ -97,7 +98,7 @@ def invoiceconfirmation(request):
     grand_total = Decimal(0)
 
     while i < items_length:
-        total = Decimal(items_quantity[i]) * Decimal(items_unit_price[i])
+        total= Decimal(items_quantity[i]) * Decimal(items_unit_price[i])
         item_table = {
             'item_name': items_name[i],
             'item_id': items_id[i],
@@ -134,7 +135,8 @@ def invoicedetails(request):
     staff_id = request.POST['staff_id']
     vendor_id = request.POST['vendor_id']
     description = request.POST['description']
-    purchase_order = get_object_or_404(PurchaseOrder)
+    #purchase_order = get_object_or_404(PurchaseOrder)
+    purchase_order = PurchaseOrder.objects.get(purchase_order_id = purchase_order_id)
     staff_info = Person.objects.get(person_id = staff_id)
     vendor_info = Vendor.objects.get(vendor_id = vendor_id)
 
@@ -175,8 +177,6 @@ def invoicedetails(request):
         grand_total = grand_total + total
     print(items)
      
-    #testing 
-    #test2
     # push the data to the database 
     current_time = datetime.datetime.now() 
     print(current_time)
@@ -202,47 +202,53 @@ def invoicedetails(request):
 
 
     # info pass to html
-    context = {
-            'title': 'Invoice Details',
-           'purchase_order_id' : purchase_order_id,
-           'invoice_id' : inv_id,
-            'staff_id' : staff_id,
-            'vendor_id' : vendor_id,
-            'rows' : items,
-            'staff_info' : staff_info,
-            'vendor_info' : vendor_info,
-            'grand_total': grand_total,
-            'time_created': current_time,
-            'description' : description
-        }
 
-    return render(request,'Invoice/invoicedetails.html',context)
+        context = {
+                'title': 'Invoice Details',
+                'purchase_order_id' : purchase_order_id,
+                'invoice_id' : inv_id,
+                'staff_id' : staff_id,
+                'vendor_id' : vendor_id,
+                'rows' : items,
+                'staff_info' : staff_info,
+                'vendor_info' : vendor_info,
+                'grand_total': grand_total,
+                'time_created': current_time,
+                'description' : description
+            }
+ 
+
+        return render(request,'PurchaseOrder/purchaseorderform.html',context)
 
 def invoicehistorydetails(request):
 
-    print(request.body)
-    pk = request.GET['inv_id']
-    invoice = Invoice.objects.get(invoice_id = pk)
-    items = InvoiceItem.objects.filter(invoice_id = pk)
 
-    print(invoice.person_id)
-    context = {
+    try:
+        print(request.body)
+        pk = request.GET['inv_id']
+        invoice = Invoice.objects.get(invoice_id = pk)
+        items = InvoiceItem.objects.filter(invoice_id = pk)
 
-            'title': 'Invoice Details',
-            'purchase_order_id' : invoice.purchase_order_id.purchase_order_id,
-            'invoice_id' : pk,
-            'staff_id' : invoice.person_id.person_id,
-            'vendor_id' : invoice.vendor_id.vendor_id,
-            'rows' : items,
-            'staff_info' : invoice.person_id,
-            'vendor_info' : invoice.vendor_id,
-            'grand_total': invoice.total_price,
-            'time_created': invoice.time_created,
-            'description' : invoice.description,
-            'year':'2019/2020'
-        }
+        print(invoice.person_id)
+        context = {
+
+                'title': 'Invoice Details',
+                'purchase_order_id' : invoice.purchase_order_id.purchase_order_id,
+                'invoice_id' : pk,
+                'staff_id' : invoice.person_id.person_id,
+                'vendor_id' : invoice.vendor_id.vendor_id,
+                'rows' : items,
+                'staff_info' : invoice.person_id,
+                'vendor_info' : invoice.vendor_id,
+                'grand_total': invoice.total_price,
+                'time_created': invoice.time_created,
+                'description' : invoice.description,
+                'year':'2019/2020'
+            }
   
-    return render(request,'Invoice/invoicehistorydetails.html',context)
+        return render(request,'Invoice/invoicehistorydetails.html',context)
+    except MultiValueDictKeyError:                   # Try exception MultiValueDictKeyError
+        return render(request,'PurchaseOrder/purchaseorderform.html')
 
 def invoicehistory(request):
 

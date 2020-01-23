@@ -1,4 +1,4 @@
-#!C:\Users\FCI\source\repos\Purchasing System\Purchasing System\env\Scripts\python.exe
+#!D:\309552_Purchasing System t1920\Purchasing System t1920\Purchasing System\env\Scripts\python.exe
 from django.core import management
 
 if __name__ == "__main__":

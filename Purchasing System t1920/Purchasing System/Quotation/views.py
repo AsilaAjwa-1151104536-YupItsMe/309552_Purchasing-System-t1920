@@ -40,6 +40,7 @@ def fillingquotation(request):
     context = {}
     re_of_quo_id = request.GET['re_of_quo_id']
     quo_id = random.randint(1000000,9999999)
+
     user_id  = request.user.id
     staff = Person.objects.get(user_id = user_id)
     try: 
@@ -103,6 +104,7 @@ def quotationconfirmation(request):
         }
         items.append(item_table)
         i = i + 1
+        grand_total = grand_total + total
     print(items)
        
 
@@ -164,6 +166,7 @@ def quotationdetails(request):
         }
         items.append(item_table)
         i = i + 1
+        grand_total = grand_total + total
     print(items)
 
  
