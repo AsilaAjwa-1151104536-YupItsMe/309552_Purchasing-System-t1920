@@ -234,7 +234,7 @@ def purchaseorderdetails(request):
                                          total_price = item['total_price'])
         po_item_info.save()
 
-
+        #testing 
     #sending email to vendor
     x = PrettyTable()
 
